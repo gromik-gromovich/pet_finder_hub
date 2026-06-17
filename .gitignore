@@ -1,0 +1,41 @@
+# Environment and secrets
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Django/local data
+*.sqlite3
+media/
+staticfiles/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+*.tsbuildinfo
+
+# AI/model caches and generated data
+*.pkl
+.torch_hub/
+torch_hub/
+
+# IDE/editor
+.idea/
+.vs/
+.vscode/
+.claude/
+
+# Generated local artifacts
+outputs/
+
+# OS files
+.DS_Store
+Thumbs.db

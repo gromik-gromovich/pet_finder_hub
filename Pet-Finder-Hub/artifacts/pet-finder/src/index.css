@@ -1,0 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&family=Quicksand:wght@500;600;700&display=swap');
+@import "leaflet/dist/leaflet.css";
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: 'Nunito', sans-serif;
+  --font-display: 'Quicksand', sans-serif;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-border: hsl(var(--border));
+  --color-ring: hsl(var(--ring));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-3xl: 2rem;
+}
+
+:root {
+  /* Soft, warm off-white background */
+  --background: 30 20% 98%;
+  --foreground: 220 20% 20%;
+  
+  /* Gentle Teal / Blue */
+  --primary: 185 45% 45%;
+  --primary-foreground: 0 0% 100%;
+  
+  /* Soft Gray for secondary */
+  --secondary: 210 20% 94%;
+  --secondary-foreground: 220 20% 30%;
+  
+  --muted: 210 20% 96%;
+  --muted-foreground: 220 10% 50%;
+  
+  /* Vibrant Coral for Call to Actions */
+  --accent: 15 85% 60%;
+  --accent-foreground: 0 0% 100%;
+  
+  /* Soft Red for Lost */
+  --destructive: 350 75% 60%;
+  --destructive-foreground: 0 0% 100%;
+  
+  /* Soft Green for Found */
+  --success: 145 50% 45%;
+  --success-foreground: 0 0% 100%;
+  
+  --border: 210 15% 90%;
+  --ring: 185 45% 45%;
+  --card: 0 0% 100%;
+  --card-foreground: 220 20% 20%;
+}
+
+.dark {
+  --background: 220 20% 10%;
+  --foreground: 30 20% 95%;
+  --primary: 185 40% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 20% 15%;
+  --secondary-foreground: 210 20% 85%;
+  --muted: 220 20% 15%;
+  --muted-foreground: 210 10% 60%;
+  --accent: 15 80% 65%;
+  --accent-foreground: 0 0% 100%;
+  --destructive: 350 70% 65%;
+  --destructive-foreground: 0 0% 100%;
+  --success: 145 45% 50%;
+  --success-foreground: 0 0% 100%;
+  --border: 220 20% 20%;
+  --ring: 185 40% 50%;
+  --card: 220 20% 12%;
+  --card-foreground: 30 20% 95%;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased font-sans transition-colors duration-300;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    @apply font-bold tracking-tight;
+  }
+}
+
+/* Custom Scrollbar for a cleaner look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--muted-foreground) / 0.3);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+
+/* Leaflet map overrides */
+.leaflet-container {
+  font-family: var(--font-sans);
+  z-index: 10;
+}
+.custom-div-icon {
+  background: transparent;
+  border: none;
+}
