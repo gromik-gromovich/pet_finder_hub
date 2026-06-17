@@ -4,13 +4,23 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth.models import User
 import os
-from .models import Ad, AdView, Favorite, Notification
+from .models import Ad, AdPhoto, AdView, Favorite, Notification
 from .serializers import AdSerializer, NotificationSerializer
 
 
 def _check_bot_key(request):
     expected_key = os.getenv('BOT_API_KEY', 'secret-bot-key-123')
     return request.headers.get('X-Bot-Key') == expected_key
+
+
+def _sync_ad_photos(ad):
+    for sort_order, image in enumerate([ad.photo, ad.photo2, ad.photo3]):
+        if image:
+            AdPhoto.objects.update_or_create(
+                ad=ad,
+                sort_order=sort_order,
+                defaults={'image': image.name},
+            )
 
 
 class BotCreateAdView(APIView):
@@ -26,6 +36,7 @@ class BotCreateAdView(APIView):
         serializer = AdSerializer(data=request.data)
         if serializer.is_valid():
             ad = serializer.save(author=user, status='pending')
+            _sync_ad_photos(ad)
             return Response({'id': ad.id, 'status': ad.status}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -96,7 +107,8 @@ class AdViewSet(viewsets.ModelViewSet):
             extra['photo2'] = self.request.FILES['photo2']
         if 'photo3' in self.request.FILES:
             extra['photo3'] = self.request.FILES['photo3']
-        serializer.save(author=self.request.user, **extra)
+        ad = serializer.save(author=self.request.user, **extra)
+        _sync_ad_photos(ad)
 
     @action(detail=False, methods=['get'])
     def my_ads(self, request):
@@ -117,6 +129,7 @@ class AdViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             return Response({'error': 'Доступ запрещен'}, status=403)
         ad = self.get_object()
+        ad._status_changed_by = request.user
         ad.status = Ad.Status.APPROVED
         ad.save()
         try:
@@ -133,6 +146,7 @@ class AdViewSet(viewsets.ModelViewSet):
         if not request.user.is_staff:
             return Response({'error': 'Доступ запрещен'}, status=403)
         ad = self.get_object()
+        ad._status_changed_by = request.user
         ad.status = Ad.Status.REJECTED
         ad.save()
         return Response({'status': 'rejected'})

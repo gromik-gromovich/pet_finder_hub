@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 import requests
 import os
@@ -66,6 +66,22 @@ class Ad(models.Model):
         ]
 
 
+class AdPhoto(models.Model):
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='photos', verbose_name='Объявление')
+    image = models.ImageField(upload_to='pet_photos/', verbose_name='Фотография')
+    sort_order = models.PositiveSmallIntegerField(default=0, verbose_name='Порядок')
+    uploaded_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата загрузки')
+
+    def __str__(self):
+        return f"Фото объявления #{self.ad_id}"
+
+    class Meta:
+        verbose_name = 'Фотография объявления'
+        verbose_name_plural = 'Фотографии объявлений'
+        ordering = ['sort_order', 'id']
+        unique_together = ('ad', 'sort_order')
+
+
 class AdView(models.Model):
     ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='views', verbose_name='Объявление')
     user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='ad_views')
@@ -105,6 +121,57 @@ class Notification(models.Model):
         verbose_name = 'Уведомление'
         verbose_name_plural = 'Уведомления'
         ordering = ['-created_at']
+
+
+class AdStatusHistory(models.Model):
+    ad = models.ForeignKey(Ad, on_delete=models.CASCADE, related_name='status_history', verbose_name='Объявление')
+    old_status = models.CharField(max_length=20, choices=Ad.Status.choices, verbose_name='Старый статус')
+    new_status = models.CharField(max_length=20, choices=Ad.Status.choices, verbose_name='Новый статус')
+    changed_by = models.ForeignKey(
+        User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='ad_status_changes',
+        verbose_name='Кто изменил',
+    )
+    comment = models.TextField(blank=True, default='', verbose_name='Комментарий')
+    changed_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата изменения')
+
+    def __str__(self):
+        return f"{self.ad_id}: {self.old_status} -> {self.new_status}"
+
+    class Meta:
+        verbose_name = 'История статуса объявления'
+        verbose_name_plural = 'История статусов объявлений'
+        ordering = ['-changed_at']
+        indexes = [
+            models.Index(fields=['ad'], name='ad_status_hist_ad_idx'),
+            models.Index(fields=['changed_at'], name='ad_status_hist_date_idx'),
+        ]
+
+
+@receiver(pre_save, sender=Ad)
+def remember_ad_status(sender, instance, **kwargs):
+    if not instance.pk:
+        instance._old_status = None
+        return
+    old_status = sender.objects.filter(pk=instance.pk).values_list('status', flat=True).first()
+    instance._old_status = old_status if old_status != instance.status else None
+
+
+@receiver(post_save, sender=Ad)
+def write_ad_status_history(sender, instance, **kwargs):
+    old_status = getattr(instance, '_old_status', None)
+    if not old_status:
+        return
+    AdStatusHistory.objects.create(
+        ad=instance,
+        old_status=old_status,
+        new_status=instance.status,
+        changed_by=getattr(instance, '_status_changed_by', None),
+        comment=getattr(instance, '_status_change_comment', ''),
+    )
 
 
 @receiver(post_save, sender=Ad)

@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Ad, AdView, Favorite, Notification
+from .models import Ad, AdPhoto, AdStatusHistory, AdView, Favorite, Notification
+
+
+class AdPhotoInline(admin.TabularInline):
+    model = AdPhoto
+    extra = 0
+    readonly_fields = ['uploaded_at']
+
 
 @admin.register(Ad)
 class AdAdmin(admin.ModelAdmin):
@@ -8,6 +15,22 @@ class AdAdmin(admin.ModelAdmin):
     search_fields = ['title', 'description', 'author__username']
     list_editable = ['status']
     readonly_fields = ['created_at', 'updated_at']
+    inlines = [AdPhotoInline]
+
+
+@admin.register(AdPhoto)
+class AdPhotoAdmin(admin.ModelAdmin):
+    list_display = ['id', 'ad', 'sort_order', 'uploaded_at']
+    list_filter = ['uploaded_at']
+    readonly_fields = ['uploaded_at']
+
+
+@admin.register(AdStatusHistory)
+class AdStatusHistoryAdmin(admin.ModelAdmin):
+    list_display = ['id', 'ad', 'old_status', 'new_status', 'changed_by', 'changed_at']
+    list_filter = ['old_status', 'new_status', 'changed_at']
+    search_fields = ['ad__title', 'changed_by__username', 'comment']
+    readonly_fields = ['changed_at']
 
 @admin.register(AdView)
 class AdViewAdmin(admin.ModelAdmin):
