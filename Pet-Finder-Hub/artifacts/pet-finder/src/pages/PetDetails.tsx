@@ -187,9 +187,9 @@ export default function PetDetails() {
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 mt-auto">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-auto">
               {!user ? (
-                <div className="flex-1 bg-secondary rounded-2xl p-4 flex items-center gap-4 text-sm">
+                <div className="lg:col-span-3 bg-secondary rounded-2xl p-4 flex items-center gap-4 text-sm">
                   <div className="w-10 h-10 bg-background rounded-full flex items-center justify-center flex-shrink-0 text-muted-foreground">
                     <AlertCircle className="w-5 h-5" />
                   </div>
@@ -198,7 +198,7 @@ export default function PetDetails() {
                   </p>
                 </div>
               ) : showContact ? (
-                <div className="flex-1 bg-primary/10 rounded-2xl p-4 border border-primary/20">
+                <div className="sm:col-span-2 lg:col-span-3 bg-primary/10 rounded-2xl p-4 border border-primary/20 min-w-0">
                   <p className="text-xs text-muted-foreground mb-3">Автор объявления</p>
                   <div className="flex items-center gap-3 mb-4">
                     {ad.author_vk_photo ? (
@@ -219,19 +219,19 @@ export default function PetDetails() {
                     {ad.phone && (
                       <a
                         href={`tel:${ad.phone}`}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 bg-secondary rounded-xl font-bold text-sm hover:bg-secondary/70 transition-colors"
+                        className="flex items-center gap-3 w-full px-4 py-2.5 bg-secondary rounded-xl font-bold text-sm hover:bg-secondary/70 transition-colors min-w-0"
                       >
                         <Phone className="w-4 h-4 text-primary flex-shrink-0" />
-                        {ad.phone}
+                        <span className="truncate">{ad.phone}</span>
                       </a>
                     )}
                     {ad.author_email && (
                       <a
                         href={`mailto:${ad.author_email}`}
-                        className="flex items-center gap-3 w-full px-4 py-2.5 bg-secondary rounded-xl font-bold text-sm hover:bg-secondary/70 transition-colors"
+                        className="flex items-center gap-3 w-full px-4 py-2.5 bg-secondary rounded-xl font-bold text-sm hover:bg-secondary/70 transition-colors min-w-0"
                       >
                         <Mail className="w-4 h-4 text-primary flex-shrink-0" />
-                        {ad.author_email}
+                        <span className="truncate">{ad.author_email}</span>
                       </a>
                     )}
                     {ad.author_vk_id && (
@@ -263,7 +263,7 @@ export default function PetDetails() {
               ) : (
                 <button
                   onClick={() => setShowContact(true)}
-                  className="flex-1 px-8 py-4 bg-accent text-white rounded-2xl font-bold text-lg shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-1 transition-all cursor-pointer"
+                  className="min-h-[74px] px-8 py-4 bg-accent text-white rounded-2xl font-bold text-lg shadow-lg shadow-accent/30 hover:shadow-xl hover:shadow-accent/40 hover:-translate-y-1 transition-all cursor-pointer"
                 >
                   Откликнуться
                 </button>
@@ -275,7 +275,7 @@ export default function PetDetails() {
                     setIsFavorited(v => !v);
                     toggleFavorite.mutate(ad.id);
                   }}
-                  className={`px-6 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  className={`min-h-[74px] px-6 py-4 rounded-2xl font-bold transition-all flex items-center justify-center gap-2 cursor-pointer ${
                     isFavorited
                       ? 'bg-red-500 text-white hover:bg-red-600'
                       : 'bg-secondary text-foreground hover:bg-secondary/80'
@@ -287,7 +287,7 @@ export default function PetDetails() {
               )}
               <button
                 onClick={handleShare}
-                className="px-6 py-4 bg-secondary text-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                className="min-h-[74px] px-6 py-4 bg-secondary text-foreground rounded-2xl font-bold hover:bg-secondary/80 transition-colors flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Share2 className="w-5 h-5" />
                 Поделиться
