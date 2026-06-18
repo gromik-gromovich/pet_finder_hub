@@ -24,6 +24,7 @@ export interface Ad {
   status: 'pending' | 'approved' | 'rejected';
   author: number;
   author_name: string;
+  author_email?: string;
   author_vk_id?: string;
   author_vk_photo?: string;
   created_at: string;

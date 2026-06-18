@@ -4,6 +4,7 @@ from .models import Ad, Favorite, Notification
 
 class AdSerializer(serializers.ModelSerializer):
     author_name = serializers.SerializerMethodField()
+    author_email = serializers.SerializerMethodField()
     author_vk_id = serializers.SerializerMethodField()
     author_vk_photo = serializers.SerializerMethodField()
     views_count = serializers.SerializerMethodField()
@@ -13,10 +14,10 @@ class AdSerializer(serializers.ModelSerializer):
         model = Ad
         fields = ['id', 'type', 'animal_type', 'title', 'breed', 'color',
                   'district', 'description', 'date', 'lat', 'lng', 'status',
-                  'author', 'author_name', 'author_vk_id', 'author_vk_photo',
+                  'author', 'author_name', 'author_email', 'author_vk_id', 'author_vk_photo',
                   'phone', 'created_at', 'photo', 'photo2', 'photo3',
                   'views_count', 'is_favorited']
-        read_only_fields = ['id', 'author', 'author_name', 'author_vk_id', 'author_vk_photo',
+        read_only_fields = ['id', 'author', 'author_name', 'author_email', 'author_vk_id', 'author_vk_photo',
                             'created_at', 'views_count', 'is_favorited']
 
     def get_author_name(self, obj):
@@ -25,6 +26,9 @@ class AdSerializer(serializers.ModelSerializer):
         if first:
             return f"{first} {last}".strip()
         return obj.author.username
+
+    def get_author_email(self, obj):
+        return obj.author.email or ''
 
     def get_author_vk_id(self, obj):
         try:

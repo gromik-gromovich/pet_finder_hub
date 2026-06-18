@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { MapComponent } from "@/components/pet/MapComponent";
 import { format } from "date-fns";
 import { ru } from "date-fns/locale";
-import { ArrowLeft, MapPin, Calendar, Info, AlertCircle, Share2, User, Phone, ChevronLeft, ChevronRight, Heart, Eye } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Info, AlertCircle, Share2, User, Phone, Mail, ChevronLeft, ChevronRight, Heart, Eye } from "lucide-react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -225,6 +225,15 @@ export default function PetDetails() {
                         {ad.phone}
                       </a>
                     )}
+                    {ad.author_email && (
+                      <a
+                        href={`mailto:${ad.author_email}`}
+                        className="flex items-center gap-3 w-full px-4 py-2.5 bg-secondary rounded-xl font-bold text-sm hover:bg-secondary/70 transition-colors"
+                      >
+                        <Mail className="w-4 h-4 text-primary flex-shrink-0" />
+                        {ad.author_email}
+                      </a>
+                    )}
                     {ad.author_vk_id && (
                       <div className="flex gap-2">
                         <a
@@ -246,7 +255,7 @@ export default function PetDetails() {
                         </a>
                       </div>
                     )}
-                    {!ad.phone && !ad.author_vk_id && (
+                    {!ad.phone && !ad.author_email && !ad.author_vk_id && (
                       <p className="text-sm text-muted-foreground">Контакты не указаны</p>
                     )}
                   </div>
